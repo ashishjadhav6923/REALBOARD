@@ -4,9 +4,9 @@ import * as fabric from "fabric";
 import { useCanvas } from "../context/CanvasContext";
 
 const Canvas = () => {
-  let {fabricCanvasRef} = useCanvas();
-  const canvasRef = useRef(null);
   const dispatch = useDispatch();
+  let { fabricCanvasRef } = useCanvas();
+  const canvasRef = useRef(null);
   const canvasColor = useSelector((state) => state.canvasColor.color);
   const toolbarHeight = useSelector((state) => state.toolbar.height);
   useEffect(() => {
@@ -17,6 +17,7 @@ const Canvas = () => {
     });
     fabricCanvasRef.current = fabricCanvas;
     fabricCanvas.backgroundColor = canvasColor;
+    fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
     fabricCanvas.renderAll();
     return () => {
       fabricCanvas.dispose();

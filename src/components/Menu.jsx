@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { menu, theme } from "../constants/menu.jsx";
+import { theme, getMenu } from "../constants/menu.jsx";
 import { lightColors, darkColors } from "../constants/canvasColors.js";
 import { useDispatch, useSelector } from "react-redux";
 import { changecanvasColor } from "../features/canvasColor.js";
@@ -7,6 +7,7 @@ import { changeTheme } from "../features/theme.js";
 import { CiPickerEmpty } from "react-icons/ci";
 
 const Menu = () => {
+  const menu = getMenu();
   const dispatch = useDispatch();
   const canvasColor = useSelector((state) => state.canvasColor.color);
   const themeColor = useSelector((state) => state.theme.themeColor);
@@ -97,6 +98,7 @@ const Menu = () => {
             themeColor == "light" ? "hover:bg-gray-200" : "hover:bg-gray-700"
           }`}
           key={index}
+          onClick={item.onclick}
         >
           <span className="flex items-center gap-2 justify-start">
             {item.logo}

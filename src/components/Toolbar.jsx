@@ -3,10 +3,20 @@ import { FiMenu } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { setToolbarHeight } from "../features/toolbarSlice";
 import useIconActions from "../constants/toolbarButtons";
+import { CiPickerEmpty } from "react-icons/ci";
+import { changedrawingColor } from "../features/canvasColor";
+import { useCanvas } from "../context/CanvasContext";
 
 const Toolbar = ({ setisMenuActive, isMenuActive }) => {
-  const icons = useIconActions();
   const dispatch = useDispatch();
+  let { fabricCanvasRef } = useCanvas();
+  const drawingColor = useSelector((state) => state.canvasColor.drawingColor);
+  const handledrawingColorChange = (e) => {
+    fabricCanvasRef.current.freeDrawingBrush.color = e.target.value;
+    fabricCanvasRef.current.renderAll();
+    dispatch(changedrawingColor(e.target.value));
+  };
+  const icons = useIconActions();
   const divRef = useRef(null);
   const [divHeight, setDivHeight] = useState(0);
   useEffect(() => {
@@ -53,27 +63,50 @@ const Toolbar = ({ setisMenuActive, isMenuActive }) => {
       >
         <FiMenu />
       </div>
-      <div
-        className={` rounded-xl  shadow-md grid grid-rows-1 grid-cols-12 items-center justify-center gap-1 p-2 h-fit ${
-          themeColor == "light"
-            ? "bg-white border-slate-200 border-1"
-            : "bg-[#232329] text-white"
-        }`}
-      >
-        {icons.map(({ Component, onClick }, index) => (
-          <Component
-            onClick={onClick}
-            key={index}
-            size={35}
-            className={`${
-              themeColor == "light" ? "hover:bg-gray-200" : "hover:bg-gray-700"
-            } p-2 rounded cursor-pointer`}
+
+      <div className="flex items-center justify-center gap-4">
+        <label htmlFor="colorPicker" className="cursor-pointer rounded h-7 w-7">
+          <CiPickerEmpty
+            color="black"
+            className="rounded h-full w-full"
+            style={{
+              background:
+                "linear-gradient(45deg, #FF5733, #FFC300, #DAF7A6, #33FF57, #3383FF)",
+            }}
           />
-        ))}
+        </label>
+        <input
+          type="color"
+          id="colorPicker"
+          value={drawingColor}
+          onChange={handledrawingColorChange}
+          className="hidden"
+        />
+        <div
+          className={`rounded-xl shadow-md grid grid-rows-1 grid-cols-12 items-center justify-center gap-1 p-2 h-fit ${
+            themeColor == "light"
+              ? "bg-white border-slate-200 border-1"
+              : "bg-[#232329] text-white"
+          }`}
+        >
+          {icons.map(({ Component, onClick }, index) => (
+            <Component
+              onClick={onClick}
+              key={index}
+              size={35}
+              className={`${
+                themeColor == "light"
+                  ? "hover:bg-gray-200"
+                  : "hover:bg-gray-700"
+              } p-2 rounded cursor-pointer`}
+            />
+          ))}
+        </div>
       </div>
+
       <div className="flex gap-2">
         <button
-          className={`rounded-lg cursor-pointer shadow-sm text-md py-2 px-3 h-fit w-fit ${
+          className={`rounded-lg cursor-pointer shadow-sm text-md py-2 px-3 h-fit w-fit select-none ${
             IsLiveButtonClicked ? "border-blue-500 border-1" : ""
           } ${
             themeColor == "light"
@@ -90,7 +123,7 @@ const Toolbar = ({ setisMenuActive, isMenuActive }) => {
           Live
         </button>
         <button
-          className={`rounded-lg cursor-pointer shadow-sm text-md py-2 px-3 h-fit w-fit ${
+          className={`select-none rounded-lg cursor-pointer shadow-sm text-md py-2 px-3 h-fit w-fit ${
             IsDownloadButtonClicked ? "border-blue-500 border-1" : ""
           } ${
             themeColor == "light"

@@ -6,7 +6,7 @@ import Menu from "./components/Menu";
 function App() {
   const [isMenuActive, setisMenuActive] = useState(false);
   return (
-    <div className="h-lvh w-lvw flex flex-col">
+    <div className="h-lvh w-lvw flex flex-col select-none">
       <Toolbar isMenuActive={isMenuActive} setisMenuActive={setisMenuActive}/>
       <Canvas />
       {isMenuActive && <Menu />}

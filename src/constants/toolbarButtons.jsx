@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   PiPencilSimpleLineThin,
   PiSquareThin,
@@ -20,10 +20,11 @@ const useIconActions = () => {
   let { fabricCanvasRef, isPencilClicked, setisPencilClicked } = useCanvas();
   let undoStack = [];
   let redoStack = [];
+  const drawingColor = useSelector((state) => state.canvasColor.drawingColor);
 
   return [
     {
-      Component: PiHandThin ,
+      Component: PiHandThin,
       onClick: () => {
         setisPencilClicked(false);
         fabricCanvasRef.current.isDrawingMode = false;
@@ -37,10 +38,7 @@ const useIconActions = () => {
         if (!isPencilClicked) {
           setisPencilClicked(true);
           fabricCanvasRef.current.isDrawingMode = true;
-          fabricCanvasRef.current.freeDrawingBrush = new fabric.PencilBrush(
-            fabricCanvasRef.current
-          );
-          fabricCanvasRef.current.freeDrawingBrush.color = "black";
+          fabricCanvasRef.current.freeDrawingBrush.color = drawingColor;
         } else if (isPencilClicked) {
           setisPencilClicked(false);
           fabricCanvasRef.current.isDrawingMode = false;
@@ -59,7 +57,7 @@ const useIconActions = () => {
           left: 100,
           top: 100,
           fill: "transparent",
-          stroke: "black",
+          stroke: drawingColor,
           strokeWidth: 2,
           width: 50,
           height: 50,
@@ -79,7 +77,7 @@ const useIconActions = () => {
           left: 100,
           top: 100,
           fill: "transparent",
-          stroke: "black",
+          stroke: drawingColor,
           strokeWidth: 2,
           width: 50,
           height: 50,
@@ -106,7 +104,7 @@ const useIconActions = () => {
             left: 100,
             top: 100,
             fill: "transparent",
-            stroke: "black",
+            stroke: drawingColor,
             strokeWidth: 2,
           }
         );
@@ -122,7 +120,7 @@ const useIconActions = () => {
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
         const line = new fabric.Line([50, 100, 200, 100], {
-          stroke: "black",
+          stroke: drawingColor,
           strokeWidth: 2,
         });
         fabricCanvasRef.current.add(line);
@@ -141,7 +139,7 @@ const useIconActions = () => {
           top: 100,
           radius: 30,
           fill: "transparent",
-          stroke: "black",
+          stroke: drawingColor,
           strokeWidth: 2,
         });
         fabricCanvasRef.current.add(circle);
@@ -159,7 +157,7 @@ const useIconActions = () => {
           left: 100,
           top: 100,
           fontSize: 20,
-          fill: "black",
+          fill: drawingColor,
           editable: true,
         });
         fabricCanvasRef.current.add(text);
