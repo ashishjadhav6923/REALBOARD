@@ -131,11 +131,11 @@ const Menu = () => {
                     if (item.type == "dark") {
                       changeColor({ name: "Midnight Black", hex: "#121212" });
                     } else if (item.type == "light") {
-                      changeColor({ name: "Pale Blue", hex: "#E3F2FD" });
+                      changeColor({ name: "White", hex: "#FFFFFF" });
                     } else if (item.type == "system") {
                       if (systemTheme == "light") {
                         changeThemeColor("light");
-                        changeColor({ name: "Pale Blue", hex: "#E3F2FD" });
+                        changeColor({ name: "White", hex: "#FFFFFF" });
                       } else if (systemTheme == "dark") {
                         changeThemeColor("dark");
                         changeColor({ name: "Midnight Black", hex: "#121212" });

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  color: "#E3F2FD",
+  color: "",
 };
 
 export const canvasColorSlice = createSlice({
