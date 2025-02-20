@@ -98,7 +98,7 @@ const Menu = () => {
             themeColor == "light" ? "hover:bg-gray-200" : "hover:bg-gray-700"
           }`}
           key={index}
-          onClick={item.onclick}
+          onClick={item.onClick}
         >
           <span className="flex items-center gap-2 justify-start">
             {item.logo}

@@ -130,6 +130,19 @@ const Toolbar = ({ setisMenuActive, isMenuActive }) => {
               ? "bg-gray-100 border-slate-300 border-1"
               : "bg-[#232329] text-white"
           }`}
+          onClick={() => {
+            if (fabricCanvasRef.current) {
+              const dataURL = fabricCanvasRef.current.toDataURL({
+                format: "png",
+                quality: 1.0, // Adjust quality if needed
+              });
+
+              const link = document.createElement("a");
+              link.href = dataURL;
+              link.download = "canvas-image.png"; // File name
+              link.click();
+            }
+          }}
           onMouseDown={() => {
             setIsDownloadButtonClicked(true);
           }}

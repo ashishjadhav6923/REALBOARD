@@ -21,6 +21,7 @@ const Canvas = () => {
     fabricCanvas.renderAll();
     return () => {
       fabricCanvas.dispose();
+      fabricCanvasRef.current = null;
     };
   }, [toolbarHeight, dispatch]);
 

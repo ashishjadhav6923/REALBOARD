@@ -13,17 +13,74 @@ export const getMenu = () => {
   let { fabricCanvasRef } = useCanvas();
 
   return [
-    { text: "Open", logo: <PiFolderThin size={17} />, onclick: () => {} },
-    { text: "Download", logo: <PiDownloadThin size={17} />, onclick: () => {} },
+    {
+      text: "Load JSON Canvas",
+      logo: <PiFolderThin size={17} />,
+      onClick: () => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "application/json";
+        input.onchange = (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+              const json = JSON.parse(e.target.result);
+              if (fabricCanvasRef.current) {
+                await fabricCanvasRef.current.loadFromJSON(json, () => {
+                  console.log("Canvas loaded successfully");
+                });
+                fabricCanvasRef.current.renderAll();
+              }
+            };
+            reader.readAsText(file);
+          }
+        };
+        input.click();
+      },
+    },
+    {
+      text: "Download PNG",
+      logo: <PiDownloadThin size={17} />,
+      onClick: () => {
+        if (fabricCanvasRef.current) {
+          const dataURL = fabricCanvasRef.current.toDataURL({
+            format: "png",
+            quality: 1.0, // Adjust quality if needed
+          });
+
+          const link = document.createElement("a");
+          link.href = dataURL;
+          link.download = "canvas-image.png"; // File name
+          link.click();
+        }
+      },
+    },
+    {
+      text: "Download JSON",
+      logo: <PiDownloadThin size={17} />,
+      onClick: () => {
+        if (fabricCanvasRef.current) {
+          const json = fabricCanvasRef.current.toJSON(); // Save canvas as JSON
+          const dataStr =
+            "data:text/json;charset=utf-8," +
+            encodeURIComponent(JSON.stringify(json));
+          const link = document.createElement("a");
+          link.href = dataStr;
+          link.download = "canvas.json"; // Save as JSON file
+          link.click();
+        }
+      },
+    },
     {
       text: "Live Collaboration",
       logo: <PiUsersThin size={17} />,
-      onclick: () => {},
+      onClick: () => {},
     },
     {
       text: "Reset the Canvas",
       logo: <PiTrashThin size={17} />,
-      onclick: () => {
+      onClick: () => {
         fabricCanvasRef.current.discardActiveObject();
         fabricCanvasRef.current.getObjects().forEach((obj) => {
           fabricCanvasRef.current.remove(obj);
