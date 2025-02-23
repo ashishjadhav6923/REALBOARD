@@ -88,7 +88,7 @@ export const getMenu = () => {
         console.log("Canvas cleared");
       },
     },
-    { text: "Sign Up", logo: <PiSignInThin size={17} />, onclick: () => {} },
+    { text: "Sign Up", logo: <PiSignInThin size={17} />, onClick: () => {} },
   ];
 };
 

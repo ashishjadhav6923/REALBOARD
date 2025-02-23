@@ -17,15 +17,32 @@ import { useCanvas } from "../context/CanvasContext";
 import * as fabric from "fabric";
 
 const useIconActions = () => {
-  let { fabricCanvasRef, isPencilClicked, setisPencilClicked } = useCanvas();
   let undoStack = [];
   let redoStack = [];
+  const resetEraserMode = () => {
+    setisEraserClicked(false);
+    if (fabricCanvasRef.current) {
+      const canvas = fabricCanvasRef.current;
+      canvas.off("mouse:down");
+      canvas.off("mouse:move");
+      canvas.off("mouse:up");
+    }
+  };
+  const canvasColor = useSelector((state) => state.canvasColor.color);
+  let {
+    fabricCanvasRef,
+    isPencilClicked,
+    setisPencilClicked,
+    setisEraserClicked,
+    isEraserClicked,
+  } = useCanvas();
   const drawingColor = useSelector((state) => state.canvasColor.drawingColor);
 
   return [
     {
       Component: PiHandThin,
       onClick: () => {
+        resetEraserMode();
         setisPencilClicked(false);
         fabricCanvasRef.current.isDrawingMode = false;
         console.log("selection tool added");
@@ -34,7 +51,9 @@ const useIconActions = () => {
     // 📝 **Pencil Tool**
     {
       Component: PiPencilSimpleLineThin,
+      isClicked: isPencilClicked,
       onClick: () => {
+        resetEraserMode();
         if (!isPencilClicked) {
           setisPencilClicked(true);
           fabricCanvasRef.current.isDrawingMode = true;
@@ -50,7 +69,9 @@ const useIconActions = () => {
     // 🟥 **Square Tool**
     {
       Component: PiSquareThin,
+      isClicked: "",
       onClick: () => {
+        resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
         const square = new fabric.Rect({
@@ -70,7 +91,9 @@ const useIconActions = () => {
     // 🔺 **Triangle Tool**
     {
       Component: PiTriangleThin,
+      isClicked: "",
       onClick: () => {
+        resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
         const triangle = new fabric.Triangle({
@@ -90,7 +113,9 @@ const useIconActions = () => {
     // 🔷 **Diamond Tool**
     {
       Component: PiDiamondThin,
+      isClicked: "",
       onClick: () => {
+        resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
         const diamond = new fabric.Polygon(
@@ -116,7 +141,9 @@ const useIconActions = () => {
     // ➖ **Line Tool**
     {
       Component: TfiLayoutLineSolid,
+      isClicked: "",
       onClick: () => {
+        resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
         const line = new fabric.Line([50, 100, 200, 100], {
@@ -131,7 +158,9 @@ const useIconActions = () => {
     // 🔵 **Circle Tool**
     {
       Component: GiCircle,
+      isClicked: "",
       onClick: () => {
+        resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
         const circle = new fabric.Circle({
@@ -150,7 +179,9 @@ const useIconActions = () => {
     // ✍ **Text Tool**
     {
       Component: PiTextAaThin,
+      isClicked: "",
       onClick: () => {
+        resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
         const text = new fabric.Textbox("Type here", {
@@ -168,15 +199,61 @@ const useIconActions = () => {
     // 🧹 **Eraser Tool**
     {
       Component: CiEraser,
+      isClicked: "",
       onClick: () => {
-        console.log("Eraser activated (select objects to delete)");
-        // }
+        setisEraserClicked(!isEraserClicked);
+        if (fabricCanvasRef.current) {
+          const canvas = fabricCanvasRef.current;
+          let isErasing = false; // Initially not erasing
+          canvas.defaultCursor = "crosshair";
+          // Disable drawing mode
+          canvas.isDrawingMode = false;
+
+          // Clear previous event listeners
+          canvas.off("mouse:down");
+          canvas.off("mouse:move");
+          canvas.off("mouse:up");
+
+          // Mouse down event - Start erasing
+          canvas.on("mouse:down", (event) => {
+            isErasing = true;
+          });
+
+          // Mouse move event - Only erase when mouse is pressed
+          canvas.on("mouse:move", (event) => {
+            if (isErasing) {
+              removeObjects(event);
+            }
+          });
+
+          // Mouse up event - Stop erasing
+          canvas.on("mouse:up", () => {
+            isErasing = false;
+          });
+
+          // Function to remove objects under the eraser
+          function removeObjects(event) {
+            const pointer = canvas.getPointer(event.e);
+            const objects = canvas.getObjects();
+
+            objects.forEach((obj) => {
+              if (obj.containsPoint(pointer)) {
+                canvas.remove(obj);
+              }
+            });
+
+            canvas.renderAll();
+          }
+        }
       },
     },
+
     // 🗑 **Clear Drawing (Trash)**
     {
       Component: PiTrashThin,
+      isClicked: "",
       onClick: () => {
+        resetEraserMode();
         fabricCanvasRef.current.discardActiveObject();
         fabricCanvasRef.current.getObjects().forEach((obj) => {
           fabricCanvasRef.current.remove(obj);
@@ -188,9 +265,10 @@ const useIconActions = () => {
     // ⏪ **Undo**
     {
       Component: PiArrowUUpLeftThin,
+      isClicked: "",
       onClick: () => {
+        resetEraserMode();
         fabricCanvasRef.current.discardActiveObject();
-        // fabricCanvasRef.current.requestRenderAll();
         if (fabricCanvasRef.current._objects.length > 0) {
           const lastObject = fabricCanvasRef.current._objects.pop();
           redoStack.push(lastObject);
@@ -203,7 +281,9 @@ const useIconActions = () => {
     // ⏩ **Redo**
     {
       Component: PiArrowUUpRightThin,
+      isClicked: "",
       onClick: () => {
+        resetEraserMode();
         if (redoStack.length > 0) {
           const lastRedo = redoStack.pop();
           fabricCanvasRef.current.add(lastRedo);

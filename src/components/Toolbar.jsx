@@ -89,7 +89,7 @@ const Toolbar = ({ setisMenuActive, isMenuActive }) => {
               : "bg-[#232329] text-white"
           }`}
         >
-          {icons.map(({ Component, onClick }, index) => (
+          {icons.map(({ Component, onClick, isClicked }, index) => (
             <Component
               onClick={onClick}
               key={index}
@@ -98,7 +98,9 @@ const Toolbar = ({ setisMenuActive, isMenuActive }) => {
                 themeColor == "light"
                   ? "hover:bg-gray-200"
                   : "hover:bg-gray-700"
-              } p-2 rounded cursor-pointer`}
+              } p-2 rounded cursor-pointer ${
+                isClicked && themeColor == "light" ? "bg-gray-200" : ""
+              } ${isClicked && themeColor == "dark" ? "bg-gray-700" : ""}`}
             />
           ))}
         </div>
