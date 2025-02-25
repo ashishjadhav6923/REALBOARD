@@ -20,6 +20,11 @@ const useIconActions = () => {
   let undoStack = [];
   let redoStack = [];
   const resetEraserMode = () => {
+    fabricCanvasRef.current.selection = true;
+        fabricCanvasRef.current.forEachObject((obj) => {
+          obj.selectable = true; // Disable selection
+          obj.evented = true; // Disable interaction
+        });
     setisEraserClicked(false);
     if (fabricCanvasRef.current) {
       const canvas = fabricCanvasRef.current;
@@ -28,7 +33,7 @@ const useIconActions = () => {
       canvas.off("mouse:up");
     }
   };
-  const canvasColor = useSelector((state) => state.canvasColor.color);
+  // const canvasColor = useSelector((state) => state.canvasColor.color);
   let {
     fabricCanvasRef,
     isPencilClicked,
@@ -199,9 +204,15 @@ const useIconActions = () => {
     // 🧹 **Eraser Tool**
     {
       Component: CiEraser,
-      isClicked: "",
+      isClicked: isEraserClicked,
       onClick: () => {
-        setisEraserClicked(!isEraserClicked);
+        fabricCanvasRef.current.selection = false;
+        fabricCanvasRef.current.forEachObject((obj) => {
+          obj.selectable = false; // Disable selection
+          obj.evented = false; // Disable interaction
+        });
+        setisPencilClicked(false);
+        setisEraserClicked(true);
         if (fabricCanvasRef.current) {
           const canvas = fabricCanvasRef.current;
           let isErasing = false; // Initially not erasing
