@@ -46,12 +46,12 @@ export const getMenu = () => {
         if (fabricCanvasRef.current) {
           const dataURL = fabricCanvasRef.current.toDataURL({
             format: "png",
-            quality: 1.0, // Adjust quality if needed
+            quality: 1.0,
           });
 
           const link = document.createElement("a");
           link.href = dataURL;
-          link.download = "canvas-image.png"; // File name
+          link.download = "realBoard.png"; 
           link.click();
         }
       },
@@ -61,13 +61,13 @@ export const getMenu = () => {
       logo: <PiDownloadThin size={17} />,
       onClick: () => {
         if (fabricCanvasRef.current) {
-          const json = fabricCanvasRef.current.toJSON(); // Save canvas as JSON
+          const json = fabricCanvasRef.current.toJSON(); 
           const dataStr =
             "data:text/json;charset=utf-8," +
             encodeURIComponent(JSON.stringify(json));
           const link = document.createElement("a");
           link.href = dataStr;
-          link.download = "canvas.json"; // Save as JSON file
+          link.download = "canvas.json"; 
           link.click();
         }
       },

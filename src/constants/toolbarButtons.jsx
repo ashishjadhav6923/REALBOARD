@@ -15,22 +15,30 @@ import { GiCircle } from "react-icons/gi";
 import { CiEraser } from "react-icons/ci";
 import { useCanvas } from "../context/CanvasContext";
 import * as fabric from "fabric";
+import { useRef } from "react";
 
 const useIconActions = () => {
-  let undoStack = [];
-  let redoStack = [];
+  const undoStack = useRef([]);
+  const redoStack = useRef([]);
   const resetEraserMode = () => {
     fabricCanvasRef.current.selection = true;
-        fabricCanvasRef.current.forEachObject((obj) => {
-          obj.selectable = true; // Disable selection
-          obj.evented = true; // Disable interaction
-        });
+    fabricCanvasRef.current.forEachObject((obj) => {
+      obj.selectable = true; // Disable selection
+      obj.evented = true; // Disable interaction
+    });
     setisEraserClicked(false);
     if (fabricCanvasRef.current) {
       const canvas = fabricCanvasRef.current;
       canvas.off("mouse:down");
       canvas.off("mouse:move");
       canvas.off("mouse:up");
+    }
+  };
+  const saveState = () => {
+    if (fabricCanvasRef.current) {
+      const json = fabricCanvasRef.current.toJSON();
+      undoStack.current.push(json);
+      redoStack.current.length = 0; // Clear redo stack on new action
     }
   };
   // const canvasColor = useSelector((state) => state.canvasColor.color);
@@ -67,7 +75,7 @@ const useIconActions = () => {
           setisPencilClicked(false);
           fabricCanvasRef.current.isDrawingMode = false;
         }
-        console.log("Pencil clicked", fabricCanvasRef.current.isDrawingMode);
+        console.log("Pencil clicked");
       },
     },
 
@@ -208,7 +216,7 @@ const useIconActions = () => {
       onClick: () => {
         fabricCanvasRef.current.selection = false;
         fabricCanvasRef.current.forEachObject((obj) => {
-          obj.selectable = false; // Disable selection
+          obj.selectable = false;
           obj.evented = false; // Disable interaction
         });
         setisPencilClicked(false);
@@ -217,7 +225,6 @@ const useIconActions = () => {
           const canvas = fabricCanvasRef.current;
           let isErasing = false; // Initially not erasing
           canvas.defaultCursor = "crosshair";
-          // Disable drawing mode
           canvas.isDrawingMode = false;
 
           // Clear previous event listeners
@@ -225,30 +232,27 @@ const useIconActions = () => {
           canvas.off("mouse:move");
           canvas.off("mouse:up");
 
-          // Mouse down event - Start erasing
           canvas.on("mouse:down", (event) => {
             isErasing = true;
           });
 
-          // Mouse move event - Only erase when mouse is pressed
           canvas.on("mouse:move", (event) => {
             if (isErasing) {
               removeObjects(event);
             }
           });
 
-          // Mouse up event - Stop erasing
           canvas.on("mouse:up", () => {
             isErasing = false;
           });
 
-          // Function to remove objects under the eraser
           function removeObjects(event) {
             const pointer = canvas.getPointer(event.e);
             const objects = canvas.getObjects();
 
             objects.forEach((obj) => {
               if (obj.containsPoint(pointer)) {
+                undoStack.current.push(obj);
                 canvas.remove(obj);
               }
             });
@@ -280,11 +284,17 @@ const useIconActions = () => {
       onClick: () => {
         resetEraserMode();
         fabricCanvasRef.current.discardActiveObject();
-        if (fabricCanvasRef.current._objects.length > 0) {
-          const lastObject = fabricCanvasRef.current._objects.pop();
-          redoStack.push(lastObject);
+        if (undoStack.current.length) {
+          const lastUndo = undoStack.current.pop();
+          fabricCanvasRef.current.add(lastUndo);
           fabricCanvasRef.current.renderAll();
-          console.log("Undo");
+        } else {
+          if (fabricCanvasRef.current._objects.length > 0) {
+            const lastObject = fabricCanvasRef.current._objects.pop();
+            redoStack.current.push(lastObject);
+            fabricCanvasRef.current.renderAll();
+            console.log("Undo");
+          }
         }
       },
     },
@@ -295,8 +305,8 @@ const useIconActions = () => {
       isClicked: "",
       onClick: () => {
         resetEraserMode();
-        if (redoStack.length > 0) {
-          const lastRedo = redoStack.pop();
+        if (redoStack.current.length > 0) {
+          const lastRedo = redoStack.current.pop();
           fabricCanvasRef.current.add(lastRedo);
           console.log("Redo");
         }
