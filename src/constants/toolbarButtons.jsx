@@ -26,7 +26,6 @@ const useIconActions = () => {
       obj.selectable = true; // Disable selection
       obj.evented = true; // Disable interaction
     });
-    setisEraserClicked(false);
     if (fabricCanvasRef.current) {
       const canvas = fabricCanvasRef.current;
       canvas.off("mouse:down");
@@ -34,13 +33,18 @@ const useIconActions = () => {
       canvas.off("mouse:up");
     }
   };
-  const saveState = () => {
-    if (fabricCanvasRef.current) {
-      const json = fabricCanvasRef.current.toJSON();
-      undoStack.current.push(json);
-      redoStack.current.length = 0; // Clear redo stack on new action
-    }
-  };
+  const resetAllButtonClicked=()=>{
+    setisHandClicked(false);
+    setisPencilClicked(false);
+    setisEraserClicked(false);
+  }
+  // const saveState = () => {
+  //   if (fabricCanvasRef.current) {
+  //     const json = fabricCanvasRef.current.toJSON();
+  //     undoStack.current.push(json);
+  //     redoStack.current.length = 0; // Clear redo stack on new action
+  //   }
+  // };
   // const canvasColor = useSelector((state) => state.canvasColor.color);
   let {
     fabricCanvasRef,
@@ -48,13 +52,18 @@ const useIconActions = () => {
     setisPencilClicked,
     setisEraserClicked,
     isEraserClicked,
+    setisHandClicked,
+    isHandClicked
   } = useCanvas();
   const drawingColor = useSelector((state) => state.canvasColor.drawingColor);
 
   return [
     {
       Component: PiHandThin,
+      isClicked: isHandClicked,
       onClick: () => {
+        resetAllButtonClicked();
+        setisHandClicked(true);
         resetEraserMode();
         setisPencilClicked(false);
         fabricCanvasRef.current.isDrawingMode = false;
@@ -66,6 +75,7 @@ const useIconActions = () => {
       Component: PiPencilSimpleLineThin,
       isClicked: isPencilClicked,
       onClick: () => {
+        resetAllButtonClicked();
         resetEraserMode();
         if (!isPencilClicked) {
           setisPencilClicked(true);
@@ -84,6 +94,7 @@ const useIconActions = () => {
       Component: PiSquareThin,
       isClicked: "",
       onClick: () => {
+        resetAllButtonClicked();
         resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
@@ -106,6 +117,7 @@ const useIconActions = () => {
       Component: PiTriangleThin,
       isClicked: "",
       onClick: () => {
+        resetAllButtonClicked();
         resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
@@ -128,6 +140,7 @@ const useIconActions = () => {
       Component: PiDiamondThin,
       isClicked: "",
       onClick: () => {
+        resetAllButtonClicked();
         resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
@@ -156,6 +169,7 @@ const useIconActions = () => {
       Component: TfiLayoutLineSolid,
       isClicked: "",
       onClick: () => {
+        resetAllButtonClicked();
         resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
@@ -173,6 +187,7 @@ const useIconActions = () => {
       Component: GiCircle,
       isClicked: "",
       onClick: () => {
+        resetAllButtonClicked();
         resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
@@ -194,6 +209,7 @@ const useIconActions = () => {
       Component: PiTextAaThin,
       isClicked: "",
       onClick: () => {
+        resetAllButtonClicked();
         resetEraserMode();
         fabricCanvasRef.current.isDrawingMode = false;
         setisPencilClicked(false);
@@ -214,6 +230,7 @@ const useIconActions = () => {
       Component: CiEraser,
       isClicked: isEraserClicked,
       onClick: () => {
+        resetAllButtonClicked();
         fabricCanvasRef.current.selection = false;
         fabricCanvasRef.current.forEachObject((obj) => {
           obj.selectable = false;
@@ -268,6 +285,7 @@ const useIconActions = () => {
       Component: PiTrashThin,
       isClicked: "",
       onClick: () => {
+        resetAllButtonClicked();
         resetEraserMode();
         fabricCanvasRef.current.discardActiveObject();
         fabricCanvasRef.current.getObjects().forEach((obj) => {
@@ -282,6 +300,7 @@ const useIconActions = () => {
       Component: PiArrowUUpLeftThin,
       isClicked: "",
       onClick: () => {
+        resetAllButtonClicked();
         resetEraserMode();
         fabricCanvasRef.current.discardActiveObject();
         if (undoStack.current.length) {
@@ -304,6 +323,7 @@ const useIconActions = () => {
       Component: PiArrowUUpRightThin,
       isClicked: "",
       onClick: () => {
+        resetAllButtonClicked();
         resetEraserMode();
         if (redoStack.current.length > 0) {
           const lastRedo = redoStack.current.pop();

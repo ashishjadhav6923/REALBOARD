@@ -25,7 +25,14 @@ export const getMenu = () => {
           if (file) {
             const reader = new FileReader();
             reader.onload = async (e) => {
-              const json = JSON.parse(e.target.result);
+              let json;
+              try {
+                json = JSON.parse(e.target.result);
+              } catch (error) {
+                alert("Only Json files are allowed")
+                console.log("error while loading file",error);
+                return;
+              }
               if (fabricCanvasRef.current) {
                 await fabricCanvasRef.current.loadFromJSON(json, () => {
                   console.log("Canvas loaded successfully");
@@ -72,11 +79,11 @@ export const getMenu = () => {
         }
       },
     },
-    {
-      text: "Live Collaboration",
-      logo: <PiUsersThin size={17} />,
-      onClick: () => {},
-    },
+    // {
+    //   text: "Live Collaboration",
+    //   logo: <PiUsersThin size={17} />,
+    //   onClick: () => {},
+    // },
     {
       text: "Reset the Canvas",
       logo: <PiTrashThin size={17} />,
@@ -88,7 +95,7 @@ export const getMenu = () => {
         console.log("Canvas cleared");
       },
     },
-    { text: "Sign Up", logo: <PiSignInThin size={17} />, onClick: () => {} },
+    // { text: "Sign Up", logo: <PiSignInThin size={17} />, onClick: () => {} },
   ];
 };
 

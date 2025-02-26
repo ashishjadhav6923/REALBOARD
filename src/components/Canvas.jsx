@@ -5,7 +5,7 @@ import { useCanvas } from "../context/CanvasContext";
 
 const Canvas = () => {
   const dispatch = useDispatch();
-  let { fabricCanvasRef } = useCanvas();
+  let { fabricCanvasRef, setisPencilClicked } = useCanvas();
   const canvasRef = useRef(null);
   const canvasColor = useSelector((state) => state.canvasColor.color);
   const toolbarHeight = useSelector((state) => state.toolbar.height);
@@ -18,6 +18,7 @@ const Canvas = () => {
     fabricCanvasRef.current = fabricCanvas;
     fabricCanvas.backgroundColor = canvasColor;
     fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas);
+    setisPencilClicked(true);
     fabricCanvas.renderAll();
     return () => {
       fabricCanvas.dispose();

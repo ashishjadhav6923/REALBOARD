@@ -6,11 +6,17 @@ import useIconActions from "../constants/toolbarButtons";
 import { CiPickerEmpty } from "react-icons/ci";
 import { changedrawingColor } from "../features/canvasColor";
 import { useCanvas } from "../context/CanvasContext";
+import { PiDownload } from "react-icons/pi";
+import { PiUpload } from "react-icons/pi";
+// import RoomManager from "./RoomManager";
 
 const Toolbar = ({ setisMenuActive, isMenuActive }) => {
   const dispatch = useDispatch();
   let { fabricCanvasRef } = useCanvas();
   const drawingColor = useSelector((state) => state.canvasColor.drawingColor);
+  // const toggleRoomManager = () => {
+  //   setisRoomManagerOpen(!isRoomManagerOpen);
+  // };
   const handledrawingColorChange = (e) => {
     fabricCanvasRef.current.freeDrawingBrush.color = e.target.value;
     fabricCanvasRef.current.renderAll();
@@ -107,7 +113,7 @@ const Toolbar = ({ setisMenuActive, isMenuActive }) => {
       </div>
 
       <div className="flex gap-2">
-        <button
+        {/* <button
           className={`rounded-lg cursor-pointer shadow-sm text-md py-2 px-3 h-fit w-fit select-none ${
             IsLiveButtonClicked ? "border-blue-500 border-1" : ""
           } ${
@@ -121,16 +127,15 @@ const Toolbar = ({ setisMenuActive, isMenuActive }) => {
           onMouseUp={() => {
             setIsLiveButtonClicked(false);
           }}
+          onClick={toggleRoomManager}
         >
           Live
-        </button>
+        </button> */}
         <button
           className={`select-none rounded-lg cursor-pointer shadow-sm text-md py-2 px-3 h-fit w-fit ${
-            IsDownloadButtonClicked ? "border-blue-500 border-1" : ""
-          } ${
             themeColor == "light"
-              ? "bg-gray-100 border-slate-300 border-1"
-              : "bg-[#232329] text-white"
+              ? "bg-gray-100 border-slate-300 border-1 hover:border-blue-500"
+              : "bg-[#232329] text-white hover:border-1 hover:border-blue-500"
           }`}
           onClick={() => {
             if (fabricCanvasRef.current) {
@@ -152,9 +157,82 @@ const Toolbar = ({ setisMenuActive, isMenuActive }) => {
             setIsDownloadButtonClicked(false);
           }}
         >
-          Download
+          <span className="flex justify-center items-center gap-1">
+            PNG
+            <PiDownload />
+          </span>
+        </button>
+        <button
+          className={`select-none rounded-lg cursor-pointer shadow-sm text-md py-2 px-3 h-fit w-fit ${
+            IsDownloadButtonClicked ? "border-blue-500 border-1" : ""
+          } ${
+            themeColor == "light"
+              ? "bg-gray-100 border-slate-300 border-1 hover:border-blue-500"
+              : "bg-[#232329] text-white hover:border-1 hover:border-blue-500"
+          }`}
+          onClick={() => {
+            if (fabricCanvasRef.current) {
+              const json = fabricCanvasRef.current.toJSON();
+              const dataStr =
+                "data:text/json;charset=utf-8," +
+                encodeURIComponent(JSON.stringify(json));
+              const link = document.createElement("a");
+              link.href = dataStr;
+              link.download = "canvas.json";
+              link.click();
+            }
+          }}
+        >
+          <span className="flex justify-center items-center gap-1">
+            JSON
+            <PiDownload />
+          </span>
+        </button>
+        <button
+          className={`select-none rounded-lg cursor-pointer shadow-sm text-md py-2 px-3 h-fit w-fit ${
+            IsDownloadButtonClicked ? "border-blue-500 border-1" : ""
+          } ${
+            themeColor == "light"
+              ? "bg-gray-100 border-slate-300 border-1 hover:border-blue-500"
+              : "bg-[#232329] text-white hover:border-1 hover:border-blue-500"
+          }`}
+          onClick={() => {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "application/json";
+            input.onchange = (event) => {
+              const file = event.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                  let json;
+                  try {
+                    json = JSON.parse(e.target.result);
+                  } catch (error) {
+                    alert("Only Json files are allowed");
+                    console.log("error while loading file", error);
+                    return;
+                  }
+                  if (fabricCanvasRef.current) {
+                    await fabricCanvasRef.current.loadFromJSON(json, () => {
+                      console.log("Canvas loaded successfully");
+                    });
+                    fabricCanvasRef.current.renderAll();
+                  }
+                };
+                reader.readAsText(file);
+              }
+            };
+            input.click();
+          }}
+        >
+          <span className="flex justify-center items-center gap-1">
+            JSON
+            <PiUpload />
+          </span>
         </button>
       </div>
+      {/* {isRoomManagerOpen ? <RoomManager /> : <></>} */}
     </div>
   );
 };
