@@ -103,7 +103,7 @@ const useIconActions = () => {
           top: 100,
           fill: "transparent",
           stroke: drawingColor,
-          strokeWidth: 2,
+          strokeWidth: 1,
           width: 50,
           height: 50,
         });
@@ -126,7 +126,7 @@ const useIconActions = () => {
           top: 100,
           fill: "transparent",
           stroke: drawingColor,
-          strokeWidth: 2,
+          strokeWidth: 1,
           width: 50,
           height: 50,
         });
@@ -156,7 +156,7 @@ const useIconActions = () => {
             top: 100,
             fill: "transparent",
             stroke: drawingColor,
-            strokeWidth: 2,
+            strokeWidth: 1,
           }
         );
         fabricCanvasRef.current.add(diamond);
@@ -175,7 +175,7 @@ const useIconActions = () => {
         setisPencilClicked(false);
         const line = new fabric.Line([50, 100, 200, 100], {
           stroke: drawingColor,
-          strokeWidth: 2,
+          strokeWidth: 1,
         });
         fabricCanvasRef.current.add(line);
         console.log("Line added");
@@ -197,7 +197,7 @@ const useIconActions = () => {
           radius: 30,
           fill: "transparent",
           stroke: drawingColor,
-          strokeWidth: 2,
+          strokeWidth: 1,
         });
         fabricCanvasRef.current.add(circle);
         console.log("Circle added");
