@@ -1,8 +1,21 @@
-# React + Vite
+# 🎨 RealBoard v1
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+RealBoard is a simple drawing application built using **Fabric.js**. It allows users to draw freely on a canvas using various tools.
 
-Currently, two official plugins are available:
+## 🚀 Features
+- 🖌️ **Freehand Drawing**: Draw using the pencil tool.
+- 🎨 **Change Background Color**: Customize the canvas background.
+- 🖼️ **Fabric.js Powered**: Smooth drawing experience with vector-based rendering.
+- 📱 **Responsive Design**: Works on all screen sizes.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠️ Technologies Used
+- **React.js** (Frontend)
+- **Fabric.js** (Canvas drawing library)
+- **Redux** (State management)
+- **CSS / Tailwind CSS** (Styling)
+
+## 📦 Installation & Setup
+1. **Clone the Repository**
+   ```sh
+   git clone https://github.com/ashishjadhav6923/REALBOARD.git
+   cd REALBOARD
